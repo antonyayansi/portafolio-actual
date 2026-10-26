@@ -1,0 +1,211 @@
+---
+---
+
+<script>
+  let booting = false;
+  let mermaidMod: typeof import('mermaid').default | null = null;
+
+  const palette = (light: boolean) =>
+    light
+      ? {
+          background: '#f3f7f4',
+          primaryColor: '#c8f0d4',
+          primaryTextColor: '#06210f',
+          primaryBorderColor: '#009e36',
+          secondaryColor: '#cfe8ff',
+          secondaryTextColor: '#0a1a2e',
+          secondaryBorderColor: '#2b7bb9',
+          tertiaryColor: '#7bc992',
+          tertiaryTextColor: '#06210f',
+          tertiaryBorderColor: '#009e36',
+          mainBkg: '#d8f5e2',
+          nodeBkg: '#d8f5e2',
+          nodeBorder: '#009e36',
+          clusterBkg: '#eaf6ef',
+          clusterBorder: '#7bc992',
+          titleColor: '#0a0a0a',
+          edgeLabelBackground: '#ffffff',
+          lineColor: '#1f6b3a',
+          textColor: '#121212',
+          actorBkg: '#d8f5e2',
+          actorBorder: '#009e36',
+          actorTextColor: '#06210f',
+          actorLineColor: '#2b7bb9',
+          signalColor: '#1a1a1a',
+          signalTextColor: '#121212',
+          labelBoxBkgColor: '#ffffff',
+          labelBoxBorderColor: '#2b7bb9',
+          labelTextColor: '#121212',
+          loopTextColor: '#121212',
+          noteBkgColor: '#eaf6ef',
+          noteTextColor: '#06210f',
+          noteBorderColor: '#009e36',
+          activationBkgColor: '#a8e6bf',
+          activationBorderColor: '#009e36',
+          sequenceNumberColor: '#ffffff',
+          sectionBkgColor: '#cfe8ff',
+          altSectionBkgColor: '#d8f5e2',
+          fillType0: '#009e36',
+          fillType1: '#00b83f',
+          fillType2: '#1f6b3a',
+          fillType3: '#7bc992',
+          fillType4: '#a8e6bf',
+          fillType5: '#c8f0d4',
+        }
+      : {
+          background: '#0c120e',
+          primaryColor: '#123d22',
+          primaryTextColor: '#eafff0',
+          primaryBorderColor: '#00ff41',
+          secondaryColor: '#16324a',
+          secondaryTextColor: '#e7f4ff',
+          secondaryBorderColor: '#4db7ff',
+          tertiaryColor: '#3d2a12',
+          tertiaryTextColor: '#ffe7c2',
+          tertiaryBorderColor: '#ffb020',
+          mainBkg: '#123d22',
+          nodeBkg: '#123d22',
+          nodeBorder: '#00ff41',
+          clusterBkg: '#0f1a13',
+          clusterBorder: '#1f6b3a',
+          titleColor: '#f2fff6',
+          edgeLabelBackground: '#0a0a0a',
+          lineColor: '#7dff9a',
+          textColor: '#e8eee9',
+          actorBkg: '#123d22',
+          actorBorder: '#00ff41',
+          actorTextColor: '#eafff0',
+          actorLineColor: '#4db7ff',
+          signalColor: '#cfe8d8',
+          signalTextColor: '#e8eee9',
+          labelBoxBkgColor: '#0a0a0a',
+          labelBoxBorderColor: '#4db7ff',
+          labelTextColor: '#e8eee9',
+          loopTextColor: '#e8eee9',
+          noteBkgColor: '#3d2a12',
+          noteTextColor: '#ffe7c2',
+          noteBorderColor: '#ffb020',
+          activationBkgColor: '#1a5c32',
+          activationBorderColor: '#00ff41',
+          sequenceNumberColor: '#000000',
+          sectionBkgColor: '#16324a',
+          altSectionBkgColor: '#3d2a12',
+          fillType0: '#123d22',
+          fillType1: '#16324a',
+          fillType2: '#3d2a12',
+          fillType3: '#3b1848',
+          fillType4: '#3d1515',
+          fillType5: '#0f2f3d',
+        };
+
+  const collectSources = () => {
+    const out: { host: Element; text: string }[] = [];
+
+    document
+      .querySelectorAll(
+        'pre[data-language="mermaid"], pre > code.language-mermaid, pre > code.mermaid',
+      )
+      .forEach((el) => {
+        const host = el.matches('pre') ? el : el.parentElement;
+        if (!host) return;
+        const text = (el.textContent ?? '').trim();
+        if (text) out.push({ host, text });
+      });
+
+    document.querySelectorAll('pre.mermaid[data-src]').forEach((host) => {
+      const text = host.getAttribute('data-src')?.trim();
+      if (text) out.push({ host, text });
+    });
+
+    return out;
+  };
+
+  const boot = async () => {
+    if (booting) return;
+    booting = true;
+    try {
+      const sources = collectSources();
+      if (!sources.length) return;
+
+      if (!mermaidMod) {
+        mermaidMod = (await import('mermaid')).default;
+      }
+
+      const light = document.documentElement.getAttribute('data-theme') === 'light';
+      const themeVariables = palette(light);
+      const plotColorPalette = light
+        ? '#009e36,#00b83f,#1f6b3a,#7bc992'
+        : '#00ff41,#7dff9a,#1a5c32,#4ade80';
+      const xyChart = { plotColorPalette };
+
+      // Init directive per diagram so theme actually switches (initialize() is sticky)
+      const wrap = (text: string) =>
+        `%%{init: ${JSON.stringify({ theme: 'base', themeVariables, xyChart })} }%%\n${text}`;
+
+      mermaidMod.initialize({
+        startOnLoad: false,
+        theme: 'base',
+        themeVariables,
+        securityLevel: 'loose',
+        fontFamily: 'Outfit, system-ui, sans-serif',
+        flowchart: { curve: 'basis', htmlLabels: true },
+        sequence: { mirrorActors: false, bottomMarginAdj: 4 },
+        xyChart,
+      });
+
+      for (const { host, text } of sources) {
+        const next = document.createElement('pre');
+        next.className = 'mermaid';
+        next.setAttribute('data-src', text);
+        next.setAttribute('data-theme', light ? 'light' : 'dark');
+        host.replaceWith(next);
+
+        const id = `mmd-${Math.random().toString(36).slice(2, 10)}`;
+        try {
+          const { svg } = await mermaidMod.render(id, wrap(text));
+          next.innerHTML = svg;
+        } catch (err) {
+          console.error('Mermaid render failed', err);
+          next.textContent = text;
+        }
+      }
+    } finally {
+      booting = false;
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      void boot();
+    });
+  } else {
+    void boot();
+  }
+
+  document.addEventListener('themechange', () => {
+    void boot();
+  });
+</script>
+
+<style is:global>
+  pre.mermaid,
+  .mermaid {
+    margin: 1.75rem 0;
+    padding: 1.35rem 1.25rem;
+    border-radius: var(--radius-lg);
+    overflow-x: auto;
+    text-align: center;
+    background: #0c120e;
+  }
+
+  html[data-theme='light'] pre.mermaid,
+  html[data-theme='light'] .mermaid {
+    background: #f3f7f4;
+  }
+
+  .mermaid svg {
+    max-width: 100%;
+    height: auto;
+    margin-inline: auto;
+  }
+</style>

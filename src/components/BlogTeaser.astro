@@ -1,0 +1,170 @@
+---
+import { getCollection } from 'astro:content';
+import { PenLine } from '@lucide/astro';
+
+const posts = (await getCollection('posts'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('es-PE', { year: 'numeric', month: 'short', day: 'numeric' });
+---
+
+{
+  posts.length > 0 && (
+    <section class="section" id="blog">
+      <div class="section-head reveal">
+        <p class="kicker">
+          <PenLine size={16} stroke-width={2} />
+          <span data-i18n="blog.kicker">Blog</span>
+        </p>
+        <h2 data-i18n="blog.title">Notas técnicas</h2>
+        <p class="section-lead" data-i18n="blog.lead">
+          Seguridad, sistemas y opiniones desde el día a día construyendo productos.
+        </p>
+      </div>
+
+      <div class="grid">
+        {posts.map((post, i) => (
+          <a
+            class={`card reveal reveal-delay-${i + 1}`}
+            href={`/blog/${post.id}/`}
+          >
+            {post.data.cover ? (
+              <div class="thumb">
+                <img
+                  src={post.data.cover}
+                  alt={post.data.coverAlt ?? post.data.title}
+                  width="480"
+                  height="270"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            ) : null}
+            <div class="body">
+              <time datetime={post.data.pubDate.toISOString()}>{fmt(post.data.pubDate)}</time>
+              <h3>{post.data.title}</h3>
+              <p>{post.data.description}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <a class="more" href="/blog/" data-i18n="blog.more">Ver todos los posts</a>
+    </section>
+  )
+}
+
+<style>
+  .section {
+    position: relative;
+    z-index: 1;
+    padding: 4rem clamp(1.25rem, 4vw, 4rem) 3rem;
+  }
+
+  .section-head {
+    max-width: 40rem;
+    margin-bottom: 2rem;
+  }
+
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.85rem;
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.85rem, 4vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-lead {
+    color: var(--muted);
+    font-size: var(--text-lead);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .card {
+    display: block;
+    border-radius: var(--radius-lg);
+    background: var(--card-bg);
+    overflow: hidden;
+    transition: transform 0.3s var(--ease-out), background 0.25s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    background: var(--card-bg-strong);
+  }
+
+  .thumb {
+    aspect-ratio: 16 / 9;
+    background: #0a0e1a;
+    overflow: hidden;
+  }
+
+  .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .body {
+    padding: 1.1rem 1.15rem 1.2rem;
+  }
+
+  time {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 0.55rem;
+  }
+
+  h3 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  .card p {
+    color: var(--muted);
+    font-size: var(--text-small);
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .more:hover {
+    color: var(--accent-bright);
+  }
+</style>

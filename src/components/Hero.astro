@@ -1,0 +1,323 @@
+---
+import { MapPin, ArrowDownRight, Download } from '@lucide/astro';
+import { profile, highlights } from '../data/cv';
+import Shapes from './Shapes.astro';
+import CursorStudio from './CursorStudio.astro';
+---
+
+<section class="hero" id="inicio">
+  <Shapes />
+
+  <div class="hero-layout">
+    <div class="hero-inner">
+      <h1 class="name">
+        <span class="name-line">
+          {
+            profile.firstName.split('').map((ch, i) => (
+              <span class="char" style={`--i: ${i}`}>
+                {ch}
+              </span>
+            ))
+          }
+        </span>
+        <span class="name-line accent">
+          {
+            profile.lastName.split('').map((ch, i) => (
+              <span class="char" style={`--i: ${i + profile.firstName.length}`}>
+                {ch}
+              </span>
+            ))
+          }
+        </span>
+      </h1>
+
+      <div class="meta">
+        <p class="role" data-i18n="hero.role">{profile.role}</p>
+        <p class="location">
+          <MapPin size={16} stroke-width={2} />
+          <span>{profile.location}</span>
+        </p>
+      </div>
+
+      <p class="lead" data-i18n="hero.summary">{profile.summary}</p>
+
+      <div class="actions">
+        <a class="btn btn-primary" href="#proyectos">
+          <span data-i18n="hero.ctaProjects">Ver proyectos</span>
+          <ArrowDownRight size={18} stroke-width={2} />
+        </a>
+        <a class="btn btn-ghost" href={profile.cvFile} download>
+          <Download size={18} stroke-width={2} />
+          <span data-i18n="hero.ctaCv">Descargar CV</span>
+        </a>
+      </div>
+
+      <ul class="highlights">
+        <li>
+          <span class="hi-mark" />
+          <span data-i18n="hero.hi1">{highlights[0]}</span>
+        </li>
+        <li>
+          <span class="hi-mark" />
+          <span data-i18n="hero.hi2">{highlights[1]}</span>
+        </li>
+        <li>
+          <span class="hi-mark" />
+          <span data-i18n="hero.hi3">{highlights[2]}</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="hero-visual">
+      <CursorStudio />
+    </div>
+  </div>
+
+  <p class="side-label" aria-hidden="true">Portfolio 2026</p>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    padding: 4rem clamp(1.25rem, 4vw, 4rem) 5rem;
+  }
+
+  .hero-layout {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(240px, 0.7fr);
+    align-items: center;
+    gap: clamp(1.25rem, 3vw, 2.75rem);
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: none;
+    min-width: 0;
+  }
+
+  .hero-visual {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: min(48vh, 420px);
+  }
+
+  .name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(2.85rem, 7.5vw, 6.25rem);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    margin-bottom: 1.25rem;
+    opacity: 0;
+    animation: fade-up 0.7s var(--ease-out) 0.12s forwards;
+  }
+
+  .name-line {
+    display: block;
+    white-space: nowrap;
+  }
+
+  .name-line.accent {
+    color: var(--accent);
+  }
+
+  .char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(0.55em) rotate(4deg);
+    animation: char-in 0.65s var(--ease-out) forwards;
+    animation-delay: calc(0.28s + var(--i) * 0.035s);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+    margin-bottom: 1.25rem;
+    opacity: 0;
+    animation: fade-up 0.7s var(--ease-out) 0.7s forwards;
+  }
+
+  .role {
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  .location {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--muted);
+    font-size: var(--text-small);
+  }
+
+  .location :global(svg) {
+    color: var(--accent);
+  }
+
+  .lead {
+    max-width: 48rem;
+    color: var(--muted);
+    font-size: var(--text-lead);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fade-up 0.7s var(--ease-out) 0.85s forwards;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fade-up 0.7s var(--ease-out) 1s forwards;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.9rem 1.35rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: var(--text-small);
+    transition:
+      transform 0.3s var(--ease-spring),
+      background 0.25s ease,
+      color 0.25s ease,
+      border-color 0.25s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .btn:active {
+    transform: translateY(-1px) scale(0.98);
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+
+  .btn-primary:hover {
+    background: var(--accent-bright);
+  }
+
+  .btn-primary :global(svg) {
+    transition: transform 0.3s var(--ease-spring);
+  }
+
+  .btn-primary:hover :global(svg) {
+    transform: translate(3px, 3px);
+  }
+
+  .btn-ghost {
+    border: none;
+    color: var(--text);
+    background: var(--accent-dim);
+  }
+
+  .btn-ghost:hover {
+    background: rgba(var(--accent-rgb), 0.22);
+    color: var(--accent-bright);
+  }
+
+  .highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem 1.25rem;
+    opacity: 0;
+    animation: fade-up 0.7s var(--ease-out) 1.15s forwards;
+  }
+
+  .highlights li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: var(--text-small);
+    color: var(--muted);
+  }
+
+  .hi-mark {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .side-label {
+    position: absolute;
+    left: auto;
+    right: 1.5rem;
+    bottom: 2rem;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: rgba(139, 151, 171, 0.45);
+    z-index: 1;
+  }
+
+  @keyframes char-in {
+    to {
+      opacity: 1;
+      transform: translateY(0) rotate(0);
+    }
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 980px) {
+    .hero-layout {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .hero-visual {
+      order: -1;
+      min-height: min(42vh, 340px);
+    }
+
+    .name {
+      font-size: clamp(2.6rem, 11vw, 4.5rem);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding-bottom: 7rem;
+      align-items: flex-start;
+      min-height: calc(100dvh - 0.5rem);
+      padding-top: 1.25rem;
+    }
+
+    .side-label {
+      display: none;
+    }
+  }
+</style>

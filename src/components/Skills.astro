@@ -1,0 +1,431 @@
+---
+import {
+  Code2,
+  Server,
+  Database,
+  Wrench,
+  BriefcaseBusiness,
+  GraduationCap,
+} from '@lucide/astro';
+import { skillGroups, experience, education } from '../data/cv';
+
+const icons = [Code2, Server, Database, Wrench];
+---
+
+<section class="section" id="skills">
+  <div class="section-head reveal">
+    <p class="kicker">
+      <Code2 size={16} stroke-width={2} />
+      <span data-i18n="skills.kicker">Skills y experiencia</span>
+    </p>
+    <h2 data-i18n="skills.title">Qué sé hacer y dónde trabajé</h2>
+    <p class="section-lead" data-i18n="skills.lead">
+      Herramientas que uso y mi experiencia en empresas, explicado de forma sencilla.
+    </p>
+  </div>
+
+  <div class="skills-grid">
+    {
+      (
+        [
+          ['skills.g1', ['skills.g1a', 'skills.g1b', 'skills.g1c', 'skills.g1d', 'skills.g1e']],
+          ['skills.g2', ['skills.g2a', 'skills.g2b', 'skills.g2c', 'skills.g2d', 'skills.g2e']],
+          ['skills.g3', ['skills.g3a', 'skills.g3b', 'skills.g3c', 'skills.g3d', 'skills.g3e']],
+          ['skills.g4', ['skills.g4a', 'skills.g4b', 'skills.g4c', 'skills.g4d', 'skills.g4e']],
+        ] as const
+      ).map(([titleKey, itemKeys], i) => {
+        const Icon = icons[i] ?? Code2;
+        const group = skillGroups[i];
+        return (
+          <div class={`skill-block reveal reveal-delay-${i + 1}`}>
+            <div class="skill-head">
+              <span class="skill-icon">
+                <Icon size={18} stroke-width={1.85} />
+              </span>
+              <h3 data-i18n={titleKey}>{group?.title}</h3>
+            </div>
+            <ul>
+              {itemKeys.map((key, j) => (
+                <li>
+                  <span data-i18n={key}>{group?.items[j]}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      })
+    }
+  </div>
+
+  <div class="split">
+    <div class="exp reveal">
+      <div class="subhead">
+        <BriefcaseBusiness size={18} stroke-width={1.85} />
+        <h3 data-i18n="skills.exp">Experiencia</h3>
+      </div>
+      <ol class="timeline">
+        {
+          experience.map((job) => (
+            <li>
+              <div class="tl-dot" />
+              <div class="tl-body">
+                <div class="tl-meta">
+                  <strong>{job.role}</strong>
+                  <span>{job.period}</span>
+                </div>
+                <p class="company">{job.company}</p>
+                <ul class="points">
+                  {job.points.map((p) => (
+                    <li>{p}</li>
+                  ))}
+                </ul>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+
+    <div class="edu reveal reveal-delay-2">
+      <div class="subhead">
+        <GraduationCap size={18} stroke-width={1.85} />
+        <h3 data-i18n="skills.edu">Formación</h3>
+      </div>
+      <ul class="edu-list">
+        {
+          education.map((ed) => (
+            <li>
+              <a class="edu-card" href={ed.href} target="_blank" rel="noopener noreferrer">
+                <div class={`edu-logo edu-logo-${ed.school.includes('Continental') ? 'uc' : 'khipu'}`}>
+                  <img src={ed.logo} alt={ed.logoAlt} loading="lazy" width="140" height="40" />
+                </div>
+                <div class="edu-body">
+                  <div class="edu-top">
+                    <strong>{ed.school}</strong>
+                    <span class="edu-badge">{ed.degree}</span>
+                  </div>
+                  <p>{ed.detail}</p>
+                  <small>{ed.place}</small>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .section {
+    position: relative;
+    z-index: 1;
+    padding: 4rem clamp(1.25rem, 4vw, 4rem) 4rem;
+  }
+
+  .section-head {
+    max-width: 40rem;
+    margin-bottom: 2.75rem;
+  }
+
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.85rem;
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .section-head h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.85rem, 4vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-lead {
+    color: var(--muted);
+    font-size: var(--text-lead);
+    line-height: 1.65;
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .skill-block {
+    padding: 1.25rem;
+    border: none;
+    border-radius: var(--radius-lg);
+    background: var(--card-bg);
+    transition: transform 0.35s var(--ease-spring), background 0.25s ease;
+  }
+
+  .skill-block:hover {
+    transform: translateY(-4px);
+    border-color: rgba(var(--accent-rgb), 0.35);
+  }
+
+  .skill-head {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 1rem;
+  }
+
+  .skill-icon {
+    width: 2.15rem;
+    height: 2.15rem;
+    display: grid;
+    place-items: center;
+    color: var(--accent);
+    background: var(--accent-dim);
+    border: none;
+    border-radius: var(--radius-sm);
+    transition: transform 0.4s var(--ease-spring);
+  }
+
+  .skill-block:hover .skill-icon {
+    transform: rotate(-8deg) scale(1.08);
+  }
+
+  .skill-head h3 {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .skill-block ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .skill-block li span {
+    display: inline-block;
+    font-size: var(--text-small);
+    padding: 0.35rem 0.65rem;
+    color: var(--muted);
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--chip-bg);
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease,
+      background 0.2s ease,
+      transform 0.25s var(--ease-spring);
+  }
+
+  .skill-block li span:hover {
+    color: var(--accent-bright);
+    border-color: rgba(var(--accent-rgb), 0.35);
+    background: var(--accent-dim);
+    transform: translateY(-2px);
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  .exp,
+  .edu {
+    padding: 1.5rem;
+    border: none;
+    border-radius: var(--radius-lg);
+    background: var(--card-bg-strong);
+  }
+
+  .subhead {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 1.35rem;
+    color: var(--accent);
+  }
+
+  .subhead h3 {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .timeline > li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1rem 1fr;
+    gap: 0.85rem;
+  }
+
+  .tl-dot {
+    width: 0.65rem;
+    height: 0.65rem;
+    margin-top: 0.35rem;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: none;
+  }
+
+  .tl-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.35rem 1rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .tl-meta strong {
+    font-size: 1rem;
+  }
+
+  .tl-meta span {
+    font-size: 0.8rem;
+    color: var(--accent);
+  }
+
+  .company {
+    font-size: var(--text-small);
+    color: var(--muted);
+    margin-bottom: 0.65rem;
+  }
+
+  .points {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .points li {
+    position: relative;
+    padding-left: 0.85rem;
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .points li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 50%;
+    background: rgba(var(--accent-rgb), 0.55);
+  }
+
+  .edu-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .edu-card {
+    display: grid;
+    gap: 0.85rem;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    border: none;
+    background: var(--card-bg);
+    transition: transform 0.3s var(--ease-spring), background 0.25s ease;
+  }
+
+  .edu-card:hover {
+    transform: translateY(-3px);
+    background: var(--card-bg-strong);
+  }
+
+  .edu-logo {
+    display: grid;
+    place-items: center;
+    min-height: 3.5rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: #fff;
+  }
+
+  .edu-logo img {
+    width: auto;
+    max-width: 100%;
+    max-height: 2.35rem;
+    object-fit: contain;
+  }
+
+  .edu-logo-khipu {
+    background: #04140a;
+  }
+
+  .edu-logo-khipu img {
+    max-height: 2.6rem;
+  }
+
+  .edu-logo-uc img {
+    max-height: 2rem;
+    color: #121216;
+  }
+
+  .edu-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.45rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .edu-top strong {
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+
+  .edu-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding: 0.25rem 0.55rem;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: var(--accent-dim);
+  }
+
+  .edu-body p {
+    font-size: var(--text-small);
+    line-height: 1.5;
+    color: var(--muted);
+    margin-bottom: 0.35rem;
+  }
+
+  .edu-body small {
+    font-size: 0.8rem;
+    color: var(--muted);
+    opacity: 0.85;
+  }
+
+  @media (max-width: 900px) {
+    .split {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

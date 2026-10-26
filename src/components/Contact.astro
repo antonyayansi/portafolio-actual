@@ -1,0 +1,270 @@
+---
+import { Mail, Send } from '@lucide/astro';
+import GitHub from './icons/GitHub.astro';
+import LinkedIn from './icons/LinkedIn.astro';
+import WhatsApp from './icons/WhatsApp.astro';
+import { profile } from '../data/cv';
+---
+
+<section class="section" id="contacto">
+  <div class="panel reveal">
+    <div class="copy">
+      <p class="kicker">
+        <Send size={16} stroke-width={2} />
+        <span data-i18n="contact.kicker">Contacto</span>
+      </p>
+      <h2 data-i18n="contact.title">¿Hablamos?</h2>
+      <p data-i18n="contact.lead">
+        Si necesitas una web, un sistema para tu empresa o alguien que lidere el lado técnico, escríbeme. Te respondo con claridad.
+      </p>
+      <div class="cta-row">
+        <a class="cta" href={`mailto:${profile.email}`}>
+          <span data-i18n="contact.mail">Enviar mensaje</span>
+          <Mail size={18} stroke-width={2} />
+        </a>
+        <a
+          class="cta cta-whatsapp"
+          href={profile.whatsapp}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <WhatsApp size={18} />
+          <span data-i18n="contact.whatsapp">WhatsApp</span>
+        </a>
+      </div>
+    </div>
+
+    <ul class="channels">
+      <li class="reveal reveal-delay-1">
+        <a href={`mailto:${profile.email}`}>
+          <span class="ch-icon"><Mail size={18} stroke-width={1.85} /></span>
+          <span class="ch-text">
+            <small>Email</small>
+            <strong>{profile.email}</strong>
+          </span>
+        </a>
+      </li>
+      <li class="reveal reveal-delay-2">
+        <a href={profile.whatsapp} target="_blank" rel="noopener noreferrer">
+          <span class="ch-icon"><WhatsApp size={18} /></span>
+          <span class="ch-text">
+            <small>WhatsApp</small>
+            <strong>{profile.phone}</strong>
+          </span>
+        </a>
+      </li>
+      <li class="reveal reveal-delay-3">
+        <a href={profile.github} target="_blank" rel="noopener noreferrer">
+          <span class="ch-icon"><GitHub size={18} /></span>
+          <span class="ch-text">
+            <small>GitHub</small>
+            <strong>antonyayansi</strong>
+          </span>
+        </a>
+      </li>
+      <li class="reveal reveal-delay-4">
+        <a href={profile.linkedin} target="_blank" rel="noopener noreferrer">
+          <span class="ch-icon"><LinkedIn size={18} /></span>
+          <span class="ch-text">
+            <small>LinkedIn</small>
+            <strong>antonyayansi</strong>
+          </span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <footer class="footer">
+    <p>© {new Date().getFullYear()} {profile.fullName}</p>
+    <p class="muted" data-i18n="contact.footer">Astro · portfolio personal</p>
+  </footer>
+</section>
+
+<style>
+  .section {
+    position: relative;
+    z-index: 1;
+    padding: 4rem clamp(1.25rem, 4vw, 4rem) 6rem;
+  }
+
+  .panel {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 2rem;
+    padding: clamp(1.5rem, 4vw, 2.75rem);
+    border: none;
+    border-radius: var(--radius-xl);
+    background: var(--card-bg-strong);
+    overflow: hidden;
+    transition: var(--theme-transition);
+  }
+
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.85rem;
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 0.85rem;
+    max-width: 16ch;
+  }
+
+  .copy > p:not(.kicker) {
+    color: var(--muted);
+    max-width: 34rem;
+    margin-bottom: 1.75rem;
+    font-size: var(--text-lead);
+    line-height: 1.65;
+  }
+
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.9rem 1.35rem;
+    border-radius: var(--radius-md);
+    background: var(--accent);
+    color: var(--on-accent);
+    font-weight: 600;
+    font-size: var(--text-small);
+    transition:
+      transform 0.3s var(--ease-spring),
+      background 0.25s ease,
+      border-color 0.25s ease,
+      color 0.25s ease;
+  }
+
+  .cta:hover {
+    transform: translateY(-2px);
+    background: var(--accent-bright);
+  }
+
+  .cta-whatsapp {
+    background: transparent;
+    color: var(--accent);
+    border: none;
+  }
+
+  .cta-whatsapp:hover {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent-bright);
+  }
+
+  .cta :global(svg) {
+    transition: transform 0.3s var(--ease-spring);
+  }
+
+  .cta:hover :global(svg) {
+    transform: translateX(3px);
+  }
+
+  .cta-whatsapp:hover :global(svg) {
+    transform: scale(1.08);
+  }
+
+  .channels {
+    display: grid;
+    gap: 0.75rem;
+    align-content: center;
+  }
+
+  .channels a {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.95rem 1rem;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--card-bg);
+    transition:
+      transform 0.3s var(--ease-spring),
+      border-color 0.25s ease,
+      background 0.25s ease;
+  }
+
+  .channels a:hover {
+    transform: translateX(6px);
+    border-color: rgba(var(--accent-rgb), 0.4);
+    background: var(--accent-dim);
+  }
+
+  .ch-icon {
+    width: 2.35rem;
+    height: 2.35rem;
+    display: grid;
+    place-items: center;
+    color: var(--accent);
+    border: none;
+    border-radius: var(--radius-sm);
+    background: rgba(var(--accent-rgb), 0.08);
+    flex-shrink: 0;
+  }
+
+  .ch-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+
+  .ch-text small {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .ch-text strong {
+    font-size: var(--text-small);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    margin-top: 2.5rem;
+    padding: 1.1rem 1.25rem;
+    border: none;
+    border-radius: var(--radius-lg);
+    background: var(--card-bg);
+    font-size: var(--text-small);
+    color: var(--muted);
+  }
+
+  .muted {
+    opacity: 0.75;
+  }
+
+  @media (max-width: 860px) {
+    .panel {
+      grid-template-columns: 1fr;
+    }
+
+    .section {
+      padding-bottom: 7.5rem;
+    }
+  }
+</style>

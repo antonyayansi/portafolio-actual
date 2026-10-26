@@ -1,0 +1,102 @@
+---
+---
+
+<div class="lang" role="group" aria-label="Language">
+  <button type="button" class="lang-btn" data-lang-set="es" aria-pressed="true">ES</button>
+  <button type="button" class="lang-btn" data-lang-set="en" aria-pressed="false">EN</button>
+</div>
+
+<style>
+  .lang {
+    display: inline-flex;
+    gap: 0.15rem;
+    padding: 0.15rem;
+    border-radius: var(--radius-sm);
+    background: var(--card-bg);
+  }
+
+  .lang-btn {
+    min-width: 2rem;
+    height: 1.85rem;
+    padding: 0 0.45rem;
+    border: none;
+    border-radius: calc(var(--radius-sm) - 0.1rem);
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition:
+      color 0.2s ease,
+      background 0.2s ease;
+  }
+
+  .lang-btn[aria-pressed='true'] {
+    color: var(--on-accent);
+    background: var(--accent);
+  }
+
+  .lang-btn:hover:not([aria-pressed='true']) {
+    color: var(--text);
+    background: var(--surface-hover);
+  }
+
+  .lang-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  import { LANG_KEY, type Locale, ui } from '../i18n/ui';
+
+  const isLocale = (v: string | null): v is Locale => v === 'es' || v === 'en';
+
+  const applyLang = (lang: Locale) => {
+    document.documentElement.lang = lang;
+    document.documentElement.setAttribute('data-lang', lang);
+    localStorage.setItem(LANG_KEY, lang);
+
+    document.querySelectorAll<HTMLElement>('[data-i18n]').forEach((el) => {
+      const key = el.getAttribute('data-i18n') as keyof typeof ui.es | null;
+      if (!key) return;
+      const value = ui[lang][key] ?? ui.es[key];
+      if (value) el.textContent = value;
+    });
+
+    document.querySelectorAll<HTMLElement>('[data-i18n-aria]').forEach((el) => {
+      const key = el.getAttribute('data-i18n-aria') as keyof typeof ui.es | null;
+      if (!key) return;
+      const value = ui[lang][key] ?? ui.es[key];
+      if (value) el.setAttribute('aria-label', value);
+    });
+
+    document.querySelectorAll<HTMLElement>('[data-lang-only]').forEach((el) => {
+      el.hidden = el.getAttribute('data-lang-only') !== lang;
+    });
+
+    document.querySelectorAll<HTMLButtonElement>('[data-lang-set]').forEach((btn) => {
+      const active = btn.getAttribute('data-lang-set') === lang;
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+
+    document.dispatchEvent(new CustomEvent('langchange', { detail: { lang } }));
+  };
+
+  const stored = localStorage.getItem(LANG_KEY);
+  const initial: Locale = isLocale(stored)
+    ? stored
+    : navigator.language.toLowerCase().startsWith('en')
+      ? 'en'
+      : 'es';
+
+  applyLang(initial);
+
+  document.querySelectorAll('[data-lang-set]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const next = btn.getAttribute('data-lang-set');
+      if (isLocale(next)) applyLang(next);
+    });
+  });
+</script>

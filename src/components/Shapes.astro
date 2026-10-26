@@ -1,0 +1,141 @@
+---
+---
+
+<div class="shapes" aria-hidden="true">
+  <svg class="shape shape-circle" viewBox="0 0 120 120" fill="none">
+    <circle cx="60" cy="60" r="48" stroke="currentColor" stroke-width="1.5"></circle>
+  </svg>
+  <svg class="shape shape-triangle" viewBox="0 0 120 110" fill="none">
+    <path d="M60 12 L108 98 H12 Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"
+    ></path>
+  </svg>
+  <svg class="shape shape-square" viewBox="0 0 100 100" fill="none">
+    <rect x="12" y="12" width="76" height="76" stroke="currentColor" stroke-width="1.5"></rect>
+  </svg>
+  <svg class="shape shape-circle-sm" viewBox="0 0 80 80" fill="none">
+    <circle cx="40" cy="40" r="28" stroke="currentColor" stroke-width="1.25"></circle>
+  </svg>
+  <span class="orbit"></span>
+</div>
+
+<style>
+  .shapes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .shape {
+    position: absolute;
+    color: var(--accent);
+    opacity: 0.55;
+    filter: none;
+    opacity: 0.35;
+    transition: color 0.35s ease, opacity 0.35s ease;
+  }
+
+  .shape-circle {
+    width: clamp(4.5rem, 9vw, 7.5rem);
+    top: 12%;
+    right: 10%;
+    animation: float-a 9s ease-in-out infinite;
+  }
+
+  .shape-triangle {
+    width: clamp(3.5rem, 7vw, 5.5rem);
+    top: 38%;
+    right: 22%;
+    animation: float-b 11s ease-in-out infinite;
+  }
+
+  .shape-square {
+    width: clamp(3rem, 6vw, 4.75rem);
+    bottom: 22%;
+    right: 8%;
+    animation: float-c 10s ease-in-out infinite;
+  }
+
+  .shape-circle-sm {
+    width: clamp(2.5rem, 5vw, 3.75rem);
+    top: 58%;
+    right: 32%;
+    opacity: 0.35;
+    animation: float-a 13s ease-in-out infinite reverse;
+  }
+
+  .orbit {
+    position: absolute;
+    top: 18%;
+    right: 18%;
+    width: 1.15rem;
+    height: 1.15rem;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: none;
+    animation: pulse-dot 3.2s ease-in-out infinite;
+  }
+
+  @keyframes float-a {
+    0%,
+    100% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    50% {
+      transform: translate(-12px, 18px) rotate(8deg);
+    }
+  }
+
+  @keyframes float-b {
+    0%,
+    100% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    50% {
+      transform: translate(14px, -16px) rotate(-10deg);
+    }
+  }
+
+  @keyframes float-c {
+    0%,
+    100% {
+      transform: translate(0, 0) rotate(12deg);
+    }
+    50% {
+      transform: translate(-10px, -14px) rotate(-4deg);
+    }
+  }
+
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.85;
+    }
+    50% {
+      transform: scale(1.35);
+      opacity: 0.45;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .shape-triangle,
+    .shape-circle-sm,
+    .orbit {
+      display: none;
+    }
+
+    .shape-circle {
+      top: 8%;
+      right: 6%;
+      opacity: 0.35;
+    }
+
+    .shape-square {
+      bottom: 18%;
+      right: 4%;
+      opacity: 0.3;
+    }
+  }
+</style>

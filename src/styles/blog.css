@@ -1,0 +1,141 @@
+.prose {
+  max-width: 54rem;
+  font-size: var(--text-body);
+  line-height: 1.75;
+  color: var(--text);
+}
+
+.prose > * + * {
+  margin-top: 1.15rem;
+}
+
+.prose h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.5vw, 1.7rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.25;
+}
+
+.prose h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-top: 1.85rem;
+  margin-bottom: 0.55rem;
+}
+
+.prose p,
+.prose li {
+  color: var(--muted);
+}
+
+.prose strong {
+  color: var(--text);
+  font-weight: 650;
+}
+
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.prose a:hover {
+  color: var(--accent-bright);
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.25rem;
+}
+
+.prose ul {
+  list-style: disc;
+}
+
+.prose ol {
+  list-style: decimal;
+}
+
+.prose li + li {
+  margin-top: 0.4rem;
+}
+
+.prose blockquote {
+  margin: 1.5rem 0;
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--radius-md);
+  background: var(--accent-dim);
+  color: var(--text);
+}
+
+.prose blockquote p {
+  color: var(--text);
+  margin: 0;
+}
+
+.prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88em;
+  padding: 0.12em 0.4em;
+  border-radius: 0.4rem;
+  background: var(--chip-bg);
+  color: var(--text);
+}
+
+.prose pre:not(.mermaid) {
+  margin: 1.5rem 0;
+  padding: 1.1rem 1.15rem;
+  border-radius: var(--radius-lg);
+  background: #0a0a0a;
+  overflow-x: auto;
+}
+
+html[data-theme='light'] .prose pre:not(.mermaid) {
+  background: #111;
+}
+
+.prose pre code {
+  padding: 0;
+  background: transparent;
+  font-size: 0.86rem;
+  color: #e8eee9;
+}
+
+.prose hr {
+  border: none;
+  height: 1px;
+  background: rgba(var(--accent-rgb), 0.2);
+  margin: 2.5rem 0;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  margin: 1.5rem 0;
+}
+
+.prose th,
+.prose td {
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  background: var(--card-bg);
+}
+
+.prose th {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.prose td {
+  color: var(--muted);
+}
+
+.prose img {
+  border-radius: var(--radius-lg);
+  margin: 1.5rem 0;
+}

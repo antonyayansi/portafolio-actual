@@ -1,0 +1,150 @@
+---
+import { getCollection, render } from 'astro:content';
+import { ArrowLeft } from '@lucide/astro';
+import BlogLayout from '../../layouts/BlogLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts
+    .filter((p) => !p.data.draft)
+    .map((post) => ({
+      params: { slug: post.id },
+      props: { post },
+    }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('es-PE', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<BlogLayout title={post.data.title} description={post.data.description}>
+  <article class="article">
+    <a class="back" href="/blog/">
+      <ArrowLeft size={16} stroke-width={2} />
+      <span data-i18n="blog.back">Blog</span>
+    </a>
+
+    {
+      post.data.cover && (
+        <div class="cover">
+          <img
+            src={post.data.cover}
+            alt={post.data.coverAlt ?? post.data.title}
+            width="1400"
+            height="933"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </div>
+      )
+    }
+
+    <header class="head">
+      <div class="meta">
+        <time datetime={post.data.pubDate.toISOString()}>{fmt(post.data.pubDate)}</time>
+        {
+          post.data.heroLabel && (
+            <span class="label">{post.data.heroLabel}</span>
+          )
+        }
+      </div>
+      <h1>{post.data.title}</h1>
+      <p class="desc">{post.data.description}</p>
+      <ul class="tags">
+        {post.data.tags.map((t) => <li>{t}</li>)}
+      </ul>
+    </header>
+
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</BlogLayout>
+
+<style>
+  .article {
+    padding: 2.75rem clamp(1.25rem, 4vw, 5rem) 5rem;
+    max-width: 68rem;
+    margin-inline: auto;
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 1.75rem;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.92rem;
+  }
+
+  .back:hover {
+    color: var(--accent);
+  }
+
+  .cover {
+    margin: 0 0 1.75rem;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--card-bg);
+  }
+
+  .cover img {
+    width: 100%;
+    height: auto;
+    display: block;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.85rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .label {
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 0.2rem 0.55rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(1.85rem, 4.5vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 0.85rem;
+  }
+
+  .desc {
+    color: var(--muted);
+    font-size: var(--text-lead);
+    line-height: 1.65;
+    margin-bottom: 1rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 2.25rem;
+  }
+
+  .tags li {
+    font-size: 0.78rem;
+    padding: 0.22rem 0.5rem;
+    border-radius: var(--radius-sm);
+    background: var(--chip-bg);
+  }
+</style>

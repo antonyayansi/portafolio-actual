@@ -1,0 +1,109 @@
+---
+---
+
+<div class="cursor-fx" aria-hidden="true" data-cursor-fx>
+  <div class="cursor-aura" data-cursor-aura></div>
+</div>
+
+<style>
+  .cursor-fx {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .cursor-fx {
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .cursor-fx.is-on {
+      opacity: 1;
+    }
+
+    .cursor-aura {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 28px;
+      height: 28px;
+      margin: -14px 0 0 -14px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(var(--accent-rgb), 0.14) 0%,
+        rgba(var(--accent-rgb), 0.04) 55%,
+        transparent 72%
+      );
+      will-change: transform;
+      transition:
+        width 0.25s var(--ease-out),
+        height 0.25s var(--ease-out),
+        margin 0.25s var(--ease-out),
+        background 0.25s ease;
+    }
+
+    .cursor-fx.is-hover .cursor-aura {
+      width: 40px;
+      height: 40px;
+      margin: -20px 0 0 -20px;
+      background: radial-gradient(
+        circle,
+        rgba(var(--accent-rgb), 0.18) 0%,
+        rgba(var(--accent-rgb), 0.05) 55%,
+        transparent 72%
+      );
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor-fx {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (!reduce && fine) {
+    const root = document.querySelector('[data-cursor-fx]') as HTMLElement | null;
+    const aura = document.querySelector('[data-cursor-aura]') as HTMLElement | null;
+
+    if (root && aura) {
+      const mouse = { x: -100, y: -100 };
+      const soft = { x: -100, y: -100 };
+
+      window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+        root.classList.add('is-on');
+      });
+
+      window.addEventListener('mouseleave', () => root.classList.remove('is-on'));
+
+      const hoverables = 'a, button, [role="button"], .btn, .card, .nav-link, .social-link';
+      document.addEventListener('mouseover', (e) => {
+        const t = e.target as Element | null;
+        if (t?.closest?.(hoverables)) root.classList.add('is-hover');
+      });
+      document.addEventListener('mouseout', (e) => {
+        const t = e.target as Element | null;
+        if (t?.closest?.(hoverables)) root.classList.remove('is-hover');
+      });
+
+      const tick = () => {
+        soft.x += (mouse.x - soft.x) * 0.18;
+        soft.y += (mouse.y - soft.y) * 0.18;
+        aura.style.transform = `translate3d(${soft.x}px, ${soft.y}px, 0)`;
+        requestAnimationFrame(tick);
+      };
+
+      requestAnimationFrame(tick);
+    }
+  }
+</script>

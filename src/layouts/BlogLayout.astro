@@ -1,0 +1,36 @@
+---
+import Layout from './Layout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import MermaidInit from '../components/blog/MermaidInit.astro';
+import '../styles/blog.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<Layout title={`${title} · Antony Ayansi`} description={description}>
+  <Sidebar />
+  <main class="main">
+    <slot />
+  </main>
+  <MermaidInit />
+</Layout>
+
+<style>
+  .main {
+    position: relative;
+    margin-left: var(--sidebar);
+    min-height: 100dvh;
+  }
+
+  @media (max-width: 768px) {
+    .main {
+      margin-left: 0;
+      padding-bottom: 5rem;
+    }
+  }
+</style>

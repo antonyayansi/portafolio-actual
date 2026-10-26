@@ -1,0 +1,102 @@
+---
+import '../styles/global.css';
+import CursorAura from '../components/CursorAura.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Antony Ayansi · Analista Full Stack',
+  description =
+    'Portfolio de Antony Ayansi: creo sistemas y páginas web claras, útiles y fáciles de usar.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#000000" />
+    <script is:inline>
+      (() => {
+        const themeKey = 'aa-theme';
+        const storedTheme = localStorage.getItem(themeKey);
+        const theme =
+          storedTheme === 'light' || storedTheme === 'dark'
+            ? storedTheme
+            : window.matchMedia('(prefers-color-scheme: light)').matches
+              ? 'light'
+              : 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', theme === 'light' ? '#ffffff' : '#000000');
+
+        const langKey = 'aa-lang';
+        const storedLang = localStorage.getItem(langKey);
+        const lang =
+          storedLang === 'en' || storedLang === 'es'
+            ? storedLang
+            : navigator.language.toLowerCase().startsWith('en')
+              ? 'en'
+              : 'es';
+        document.documentElement.lang = lang;
+        document.documentElement.setAttribute('data-lang', lang);
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+  </head>
+  <body>
+    <CursorAura />
+    <slot />
+    <script>
+      const reveals = document.querySelectorAll('.reveal');
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              io.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
+      );
+      reveals.forEach((el) => io.observe(el));
+
+      const links = document.querySelectorAll('[data-nav]');
+      const sections = [...links]
+        .map((l) => {
+          const href = l.getAttribute('href') || '';
+          return href.startsWith('#') ? document.querySelector(href) : null;
+        })
+        .filter(Boolean) as HTMLElement[];
+
+      const navIo = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const id = `#${entry.target.id}`;
+            links.forEach((link) => {
+              link.classList.toggle('is-active', link.getAttribute('href') === id);
+            });
+          });
+        },
+        { rootMargin: '-40% 0px -50% 0px', threshold: 0 },
+      );
+      sections.forEach((s) => navIo.observe(s));
+    </script>
+  </body>
+</html>
+

@@ -1,0 +1,283 @@
+---
+import { Home, FolderKanban, BookOpen, PenLine, Code2, Mail } from '@lucide/astro';
+import GitHub from './icons/GitHub.astro';
+import LinkedIn from './icons/LinkedIn.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import LangToggle from './LangToggle.astro';
+import { profile } from '../data/cv';
+
+const path = Astro.url.pathname;
+const onHome = path === '/' || path === '';
+const onBlog = path.startsWith('/blog');
+
+const items = [
+  { href: onHome ? '#inicio' : '/#inicio', labelKey: 'nav.home' as const, Icon: Home, hash: true },
+  {
+    href: onHome ? '#proyectos' : '/#proyectos',
+    labelKey: 'nav.projects' as const,
+    Icon: FolderKanban,
+    hash: true,
+  },
+  {
+    href: onHome ? '#articulos' : '/#articulos',
+    labelKey: 'nav.papers' as const,
+    Icon: BookOpen,
+    hash: true,
+  },
+  { href: onHome ? '#blog' : '/blog/', labelKey: 'nav.blog' as const, Icon: PenLine, hash: onHome },
+  { href: onHome ? '#skills' : '/#skills', labelKey: 'nav.skills' as const, Icon: Code2, hash: true },
+  {
+    href: onHome ? '#contacto' : '/#contacto',
+    labelKey: 'nav.contact' as const,
+    Icon: Mail,
+    hash: true,
+  },
+];
+
+const defaults: Record<(typeof items)[number]['labelKey'], string> = {
+  'nav.home': 'Inicio',
+  'nav.projects': 'Proyectos',
+  'nav.papers': 'Papers',
+  'nav.blog': 'Blog',
+  'nav.skills': 'Skills',
+  'nav.contact': 'Contacto',
+};
+---
+
+<aside class="sidebar" aria-label="Navegación principal" data-i18n-aria="nav.aria">
+  <a class="brand" href={onHome ? '#inicio' : '/'} aria-label="Ir al inicio" data-i18n-aria="nav.brand">
+    <span class="brand-mark">A</span>
+  </a>
+
+  <nav class="nav">
+    {
+      items.map(({ href, labelKey, Icon, hash }) => (
+        <a
+          class:list={['nav-link', { 'is-active': !hash && onBlog && href === '/blog/' }]}
+          href={href}
+          data-nav={hash && onHome ? true : undefined}
+        >
+          <span class="nav-icon">
+            <Icon size={20} stroke-width={1.75} />
+          </span>
+          <span class="nav-label" data-i18n={labelKey}>
+            {defaults[labelKey]}
+          </span>
+        </a>
+      ))
+    }
+  </nav>
+
+  <div class="tools">
+    <LangToggle />
+    <ThemeToggle />
+    <div class="social">
+      <a
+        class="social-link"
+        href={profile.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="GitHub"
+      >
+        <GitHub size={18} />
+      </a>
+      <a
+        class="social-link"
+        href={profile.linkedin}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="LinkedIn"
+      >
+        <LinkedIn size={18} />
+      </a>
+    </div>
+  </div>
+</aside>
+
+<style>
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 40;
+    width: var(--sidebar);
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.35rem 0.55rem;
+    border-right: none;
+    background: var(--sidebar-bg);
+    transition: var(--theme-transition);
+  }
+
+  .brand {
+    width: 2.75rem;
+    height: 2.75rem;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--accent-dim);
+    transition: transform 0.35s var(--ease-spring), background 0.25s ease;
+  }
+
+  .brand:hover {
+    transform: scale(1.05);
+    background: rgba(var(--accent-rgb), 0.22);
+  }
+
+  .brand-mark {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: var(--accent);
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    width: 100%;
+  }
+
+  .nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.28rem;
+    width: 100%;
+    min-height: 3.35rem;
+    padding: 0.55rem 0.3rem;
+    border-radius: var(--radius-md);
+    color: var(--muted);
+    overflow: visible;
+    transition:
+      color 0.25s ease,
+      background 0.25s ease,
+      transform 0.3s var(--ease-spring);
+  }
+
+  .nav-link:hover {
+    color: var(--text);
+    background: var(--surface-hover);
+    transform: translateY(-2px);
+  }
+
+  .nav-link.is-active {
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .nav-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    transition: transform 0.35s var(--ease-spring);
+  }
+
+  .nav-link:hover .nav-icon,
+  .nav-link.is-active .nav-icon {
+    transform: scale(1.1);
+  }
+
+  .nav-label {
+    display: block;
+    width: 100%;
+    padding-inline: 0.1rem;
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    text-align: center;
+    text-transform: uppercase;
+    white-space: normal;
+    overflow-wrap: break-word;
+    hyphens: manual;
+  }
+
+  .tools {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .social {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .social-link {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    color: var(--muted);
+    border: none;
+    transition:
+      color 0.25s ease,
+      border-color 0.25s ease,
+      transform 0.3s var(--ease-spring),
+      background 0.25s ease;
+  }
+
+  .social-link:hover {
+    color: var(--accent);
+    border-color: var(--line);
+    background: var(--accent-dim);
+    transform: translateY(-3px);
+  }
+
+  @media (max-width: 768px) {
+    .sidebar {
+      top: auto;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: auto;
+      flex-direction: row;
+      padding: 0.55rem 0.65rem;
+      border-right: none;
+      border-top: none;
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      background: var(--sidebar-bg);
+    }
+
+    .brand,
+    .social {
+      display: none;
+    }
+
+    .tools {
+      position: fixed;
+      top: 0.75rem;
+      right: 0.75rem;
+      z-index: 45;
+      flex-direction: row;
+      gap: 0.4rem;
+    }
+
+    .nav {
+      flex-direction: row;
+      justify-content: space-around;
+      width: 100%;
+      gap: 0.15rem;
+    }
+
+    .nav-link {
+      flex: 1;
+      min-height: 0;
+      padding: 0.4rem 0.15rem;
+    }
+
+    .nav-label {
+      font-size: 0.52rem;
+    }
+  }
+</style>

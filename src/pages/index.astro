@@ -1,0 +1,36 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import Hero from '../components/Hero.astro';
+import Projects from '../components/Projects.astro';
+import Articles from '../components/Articles.astro';
+import BlogTeaser from '../components/BlogTeaser.astro';
+import Skills from '../components/Skills.astro';
+import Contact from '../components/Contact.astro';
+---
+
+<Layout>
+  <Sidebar />
+  <main class="main">
+    <Hero />
+    <Projects />
+    <Articles />
+    <BlogTeaser />
+    <Skills />
+    <Contact />
+  </main>
+</Layout>
+
+<style>
+  .main {
+    position: relative;
+    margin-left: var(--sidebar);
+    min-height: 100dvh;
+  }
+
+  @media (max-width: 768px) {
+    .main {
+      margin-left: 0;
+    }
+  }
+</style>

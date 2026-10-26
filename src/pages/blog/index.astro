@@ -1,0 +1,197 @@
+---
+import { getCollection } from 'astro:content';
+import { PenLine } from '@lucide/astro';
+import BlogLayout from '../../layouts/BlogLayout.astro';
+
+const posts = (await getCollection('posts'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('es-PE', { year: 'numeric', month: 'short', day: 'numeric' });
+---
+
+<BlogLayout
+  title="Blog"
+  description="Notas de un indie programmer: hallazgos, seguridad, opiniones y experimentos."
+>
+  <section class="page">
+    <header class="head reveal is-visible">
+      <p class="kicker">
+        <PenLine size={16} stroke-width={2} />
+        <span data-i18n="blog.kicker">Blog</span>
+      </p>
+      <h1 data-i18n="blog.pageTitle">Notas técnicas</h1>
+      <p class="lead" data-i18n="blog.pageLead">
+        Seguridad, sistemas y opiniones de alguien que construye y mantiene productos
+        en producción.
+      </p>
+    </header>
+
+    <ul class="list">
+      {
+        posts.map((post, i) => (
+          <li class={`reveal is-visible reveal-delay-${(i % 4) + 1}`}>
+            <a class="card" href={`/blog/${post.id}/`}>
+              {post.data.cover && (
+                <div class="thumb">
+                  <img
+                    src={post.data.cover}
+                    alt={post.data.coverAlt ?? post.data.title}
+                    width="700"
+                    height="466"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              )}
+              <div class="body">
+                <div class="meta">
+                  <time datetime={post.data.pubDate.toISOString()}>{fmt(post.data.pubDate)}</time>
+                  {post.data.heroLabel && <span class="label">{post.data.heroLabel}</span>}
+                </div>
+                <h2>{post.data.title}</h2>
+                <p>{post.data.description}</p>
+                <ul class="tags">
+                  {post.data.tags.map((t) => (
+                    <li>{t}</li>
+                  ))}
+                </ul>
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BlogLayout>
+
+<style>
+  .page {
+    padding: 3.5rem clamp(1.25rem, 4vw, 5rem) 5rem;
+    max-width: 68rem;
+    margin-inline: auto;
+  }
+
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.85rem;
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.75rem;
+  }
+
+  .lead {
+    color: var(--muted);
+    font-size: var(--text-lead);
+    line-height: 1.65;
+    margin-bottom: 2.5rem;
+  }
+
+  .lead code {
+    font-size: 0.85em;
+    padding: 0.1em 0.4em;
+    border-radius: 0.4rem;
+    background: var(--chip-bg);
+    color: var(--text);
+  }
+
+  .list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .card {
+    display: block;
+    border-radius: var(--radius-lg);
+    background: var(--card-bg);
+    overflow: hidden;
+    transition: transform 0.3s var(--ease-out), background 0.25s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    background: var(--card-bg-strong);
+  }
+
+  .thumb {
+    aspect-ratio: 16 / 9;
+    background: #0a0e1a;
+    overflow: hidden;
+  }
+
+  .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    transition: transform 0.45s var(--ease-out);
+  }
+
+  .card:hover .thumb img {
+    transform: scale(1.03);
+  }
+
+  .body {
+    padding: 1.2rem 1.25rem 1.3rem;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.7rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .label {
+    color: var(--accent);
+    background: var(--accent-dim);
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2.2vw, 1.4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    margin-bottom: 0.55rem;
+  }
+
+  .body > p {
+    color: var(--muted);
+    font-size: var(--text-body);
+    line-height: 1.6;
+    margin-bottom: 0.9rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .tags li {
+    font-size: 0.78rem;
+    padding: 0.22rem 0.5rem;
+    border-radius: var(--radius-sm);
+    background: var(--chip-bg);
+    color: var(--text);
+  }
+</style>

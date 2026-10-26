@@ -1,0 +1,199 @@
+---
+import { BookOpen, ExternalLink } from '@lucide/astro';
+import { articles } from '../data/cv';
+---
+
+<section class="section" id="articulos">
+  <div class="section-head reveal">
+    <p class="kicker">
+      <BookOpen size={16} stroke-width={2} />
+      <span data-i18n="articles.kicker">Artículos</span>
+    </p>
+    <h2 data-i18n="articles.title">Publicaciones científicas</h2>
+    <p class="section-lead" data-i18n="articles.lead">
+      Investigación en IA aplicada: accesibilidad visual y emociones en el aula.
+    </p>
+  </div>
+
+  <div class="list">
+    {
+      articles.map((article, index) => (
+        <article class={`item reveal reveal-delay-${(index % 2) + 1}`}>
+          <div class="meta">
+            <span class="type">{article.type}</span>
+            <span class="year">{article.year}</span>
+          </div>
+          <h3>
+            <a href={article.href} target="_blank" rel="noopener noreferrer">
+              {article.title}
+            </a>
+          </h3>
+          <p class="venue">{article.venue}</p>
+          <p class="authors">{article.authors}</p>
+          <p class="summary">{article.summary}</p>
+          <div class="actions">
+            <a class="link" href={article.href} target="_blank" rel="noopener noreferrer">
+              <ExternalLink size={16} stroke-width={2} />
+              <span data-i18n="articles.read">Leer publicación</span>
+            </a>
+            {'doi' in article && article.doi ? (
+              <span class="doi">DOI {article.doi}</span>
+            ) : null}
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .section {
+    position: relative;
+    z-index: 1;
+    padding: 4rem clamp(1.25rem, 4vw, 4rem) 4rem;
+  }
+
+  .section-head {
+    max-width: 42rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.85rem;
+    color: var(--accent);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.85rem, 4vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-lead {
+    color: var(--muted);
+    font-size: var(--text-lead);
+    line-height: 1.65;
+  }
+
+  .list {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .item {
+    padding: 1.5rem 1.4rem;
+    border-radius: var(--radius-lg);
+    background: var(--card-bg);
+    transition: background 0.25s ease, transform 0.3s var(--ease-out);
+  }
+
+  .item:hover {
+    background: var(--card-bg-strong);
+    transform: translateY(-2px);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .type,
+  .year {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.28rem 0.55rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .type {
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .year {
+    color: var(--muted);
+    background: var(--chip-bg);
+  }
+
+  h3 {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.65rem;
+  }
+
+  h3 a {
+    display: inline;
+    color: var(--text);
+  }
+
+  h3 a:hover {
+    color: var(--accent);
+  }
+
+  .venue {
+    font-size: var(--text-small);
+    color: var(--accent);
+    margin-bottom: 0.35rem;
+  }
+
+  .authors {
+    font-size: 0.92rem;
+    color: var(--muted);
+    margin-bottom: 0.85rem;
+  }
+
+  .summary {
+    font-size: var(--text-body);
+    line-height: 1.65;
+    color: var(--muted);
+    margin-bottom: 1.1rem;
+    max-width: 56rem;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+  }
+
+  .link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    color: var(--on-accent);
+    background: var(--accent);
+    padding: 0.55rem 0.95rem;
+    border-radius: var(--radius-md);
+    transition: transform 0.25s var(--ease-spring), background 0.2s ease;
+  }
+
+  .link:hover {
+    transform: translateY(-2px);
+    background: var(--accent-bright);
+  }
+
+  .doi {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+</style>

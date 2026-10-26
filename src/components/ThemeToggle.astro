@@ -1,0 +1,112 @@
+---
+import { Moon, Sun } from '@lucide/astro';
+---
+
+<button
+  type="button"
+  class="theme-toggle"
+  data-theme-toggle
+  aria-label="Cambiar tema"
+  title="Cambiar tema"
+>
+  <span class="icon icon-sun" aria-hidden="true">
+    <Sun size={18} stroke-width={1.85} />
+  </span>
+  <span class="icon icon-moon" aria-hidden="true">
+    <Moon size={18} stroke-width={1.85} />
+  </span>
+</button>
+
+<style>
+  .theme-toggle {
+    position: relative;
+    width: 2.35rem;
+    height: 2.35rem;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    border: none;
+    color: var(--muted);
+    background: var(--card-bg);
+    transition:
+      color 0.25s ease,
+      border-color 0.25s ease,
+      background 0.25s ease,
+      transform 0.35s var(--ease-spring),
+      box-shadow 0.25s ease;
+  }
+
+  .theme-toggle:hover {
+    color: var(--accent);
+    border-color: rgba(var(--accent-rgb), 0.45);
+    transform: translateY(-2px) rotate(-8deg);
+    box-shadow: 0 8px 20px rgba(var(--accent-rgb), 0.18);
+  }
+
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .icon {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    transition:
+      opacity 0.3s ease,
+      transform 0.35s var(--ease-spring);
+  }
+
+  /* Dark mode → show sun (switch to light) */
+  :global(html[data-theme='dark']) .icon-sun {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  :global(html[data-theme='dark']) .icon-moon {
+    opacity: 0;
+    transform: scale(0.5) rotate(-40deg);
+  }
+
+  /* Light mode → show moon (switch to dark) */
+  :global(html[data-theme='light']) .icon-sun {
+    opacity: 0;
+    transform: scale(0.5) rotate(40deg);
+  }
+  :global(html[data-theme='light']) .icon-moon {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+</style>
+
+<script>
+  const KEY = 'aa-theme';
+
+  const getSystem = () =>
+    window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+
+  const apply = (theme: 'light' | 'dark') => {
+    document.documentElement.setAttribute('data-theme', theme);
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      meta.setAttribute('content', theme === 'light' ? '#ffffff' : '#000000');
+    }
+    document.dispatchEvent(new CustomEvent('themechange', { detail: { theme } }));
+  };
+
+  const stored = localStorage.getItem(KEY) as 'light' | 'dark' | null;
+  apply(stored === 'light' || stored === 'dark' ? stored : getSystem());
+
+  document.querySelectorAll('[data-theme-toggle]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const next =
+        document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      localStorage.setItem(KEY, next);
+      apply(next);
+    });
+  });
+
+  window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+    if (localStorage.getItem(KEY)) return;
+    apply(e.matches ? 'light' : 'dark');
+  });
+</script>
